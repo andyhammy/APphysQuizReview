@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AP Physics Kinematics Review</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- KaTeX for Math Rendering -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    .flashcard { perspective: 1000px; }
+    .flashcard-inner { transition: transform 0.6s; transform-style: preserve-3d; }
+    .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+    .flashcard-front, .flashcard-back { backface-visibility: hidden; }
+    .flashcard-back { transform: rotateY(180deg); }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <i class="fa-solid fa-atom text-indigo-400 text-2xl"></i>
+        <h1 class="text-xl font-bold bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+          AP Physics: Kinematics Concept Review
+        </h1>
+      </div>
+      <span class="bg-slate-700 text-slate-300 text-xs px-3 py-1 rounded-full">
+        Unit 1.2 / 1.3 Parallel Prep
+      </span>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="bg-slate-800/80 border-b border-slate-700">
+    <div class="max-w-7xl mx-auto px-4 flex space-x-2 overflow-x-auto">
+      <button onclick="switchTab('quiz')" id="tab-quiz" class="px-4 py-3 font-semibold text-sm border-b-2 border-indigo-500 text-indigo-400 flex items-center gap-2 whitespace-nowrap">
+        <i class="fa-solid fa-list-check"></i> Practice Quiz (12 Items)
+      </button>
+      <button onclick="switchTab('visualizer')" id="tab-visualizer" class="px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+        <i class="fa-solid fa-chart-line"></i> Motion Graph Lab
+      </button>
+      <button onclick="switchTab('flashcards')" id="tab-flashcards" class="px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+        <i class="fa-solid fa-clone"></i> Concept Flashcards
+      </button>
+      <button onclick="switchTab('cheatsheet')" id="tab-cheatsheet" class="px-4 py-3 font-semibold text-sm border-b-2 border-transparent text-slate-400 hover:text-slate-200 flex items-center gap-2 whitespace-nowrap">
+        <i class="fa-solid fa-book-bookmark"></i> Formula Reference
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
+
+    <!-- TAB 1: PRACTICE QUIZ -->
+    <div id="content-quiz" class="space-y-6">
+      <div class="bg-slate-800 rounded-xl p-4 border border-slate-700 flex flex-wrap justify-between items-center gap-4">
+        <div>
+          <h2 class="text-lg font-bold text-slate-100">Parallel Review Quiz</h2>
+          <p class="text-xs text-slate-400">Master these 12 target kinematic concepts before your exam.</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="text-right">
+            <span class="text-xs text-slate-400">Score</span>
+            <div id="score-display" class="text-xl font-extrabold text-indigo-400">0 / 8</div>
+          </div>
+          <button onclick="resetQuiz()" class="bg-slate-700 hover:bg-slate-600 text-slate-200 px-3 py-1.5 rounded-lg text-xs font-semibold">
+            <i class="fa-solid fa-rotate-right"></i> Reset
+          </button>
+        </div>
+      </div>
+
+      <div id="quiz-container" class="space-y-6">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+
+    <!-- TAB 2: GRAPH VISUALIZER -->
+    <div id="content-visualizer" class="hidden space-y-6">
+      <div class="bg-slate-800 rounded-xl p-6 border border-slate-700">
+        <h2 class="text-xl font-bold text-slate-100 mb-2">Interactive Kinematic Motion Lab</h2>
+        <p class="text-sm text-slate-400 mb-6">Adjust initial conditions and acceleration to observe $x(t)$, $v(t)$, and $a(t)$ relationships in real time.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-slate-900/80 p-5 rounded-lg border border-slate-700 space-y-4">
+            <h3 class="font-semibold text-indigo-400 text-sm uppercase tracking-wider">Controls</h3>
+            
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Initial Position $x_0$ (m): <span id="val-x0" class="text-indigo-400 font-bold">0</span></label>
+              <input type="range" id="param-x0" min="-10" max="10" value="0" step="1" class="w-full h-2 bg-slate-700 rounded-lg cursor-pointer">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Initial Velocity $v_0$ (m/s): <span id="val-v0" class="text-indigo-400 font-bold">-4</span></label>
+              <input type="range" id="param-v0" min="-10" max="10" value="-4" step="1" class="w-full h-2 bg-slate-700 rounded-lg cursor-pointer">
+            </div>
+
+            <div>
+              <label class="block text-xs font-medium text-slate-300 mb-1">Acceleration $a$ (m/s²): <span id="val-a" class="text-indigo-400 font-bold">2</span></label>
+              <input type="range" id="param-a" min="-5" max="5" value="2" step="0.5" class="w-full h-2 bg-slate-700 rounded-lg cursor-pointer">
+            </div>
+
+            <div class="pt-2 border-t border-slate-800 text-xs text-slate-400 space-y-1">
+              <p>• <strong>Slope of $x(t)$:</strong> Velocity</p>
+              <p>• <strong>Slope of $v(t)$:</strong> Acceleration</p>
+              <p>• <strong>Area under $v(t)$:</strong> Displacement</p>
+            </div>
+          </div>
+
+          <div class="md:col-span-2 bg-slate-900/50 p-4 rounded-lg border border-slate-700">
+            <canvas id="motionChart" class="w-full h-64"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: FLASHCARDS -->
+    <div id="content-flashcards" class="hidden space-y-6">
+      <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 flex flex-col items-center">
+        <div class="w-full max-w-xl flex justify-between items-center mb-4">
+          <h2 class="text-lg font-bold text-slate-100">Quick Concept Warmup</h2>
+          <span id="card-counter" class="text-sm font-semibold text-indigo-400">1 / 8</span>
+        </div>
+
+        <div id="flashcard" onclick="flipCard()" class="flashcard w-full max-w-xl h-72 cursor-pointer">
+          <div id="flashcard-inner" class="flashcard-inner relative w-full h-full text-center rounded-xl shadow-xl">
+            <div class="flashcard-front absolute w-full h-full bg-slate-900 border-2 border-indigo-500/50 rounded-xl p-8 flex flex-col justify-center items-center">
+              <span id="card-tag" class="text-xs uppercase text-indigo-400 font-semibold mb-2">Concept #1</span>
+              <p id="card-question" class="text-lg font-medium text-slate-100">Question...</p>
+              <span class="text-xs text-slate-500 mt-6"><i class="fa-solid fa-rotate mr-1"></i> Click to flip</span>
+            </div>
+            <div class="flashcard-back absolute w-full h-full bg-indigo-950/90 border-2 border-indigo-400 rounded-xl p-8 flex flex-col justify-center items-center">
+              <span class="text-xs uppercase text-emerald-400 font-semibold mb-2">Explanation</span>
+              <p id="card-answer" class="text-base text-slate-200">Answer...</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex gap-4 mt-6">
+          <button onclick="prevCard()" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-lg text-sm font-semibold">
+            <i class="fa-solid fa-arrow-left"></i> Prev
+          </button>
+          <button onclick="nextCard()" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm font-semibold">
+            Next <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: CHEAT SHEET -->
+    <div id="content-cheatsheet" class="hidden space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 space-y-3">
+          <h2 class="text-lg font-bold text-indigo-400">Calculus Kinematics</h2>
+          <p class="text-sm">• <strong>Velocity:</strong> $v(t) = \frac{dx}{dt} = x'(t)$</p>
+          <p class="text-sm">• <strong>Acceleration:</strong> $a(t) = \frac{dv}{dt} = \frac{d^2x}{dt^2} = v'(t)$</p>
+          <p class="text-sm">• <strong>Displacement:</strong> $\Delta x = \int_{t_1}^{t_2} v(t) \, dt = x(t_2) - x(t_1)$</p>
+        </div>
+
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 space-y-3">
+          <h2 class="text-lg font-bold text-indigo-400">Constant Acceleration Equations</h2>
+          <p class="text-sm">• $v = v_0 + at$</p>
+          <p class="text-sm">• $x = x_0 + v_0 t + \frac{1}{2} a t^2$</p>
+          <p class="text-sm">• $v^2 = v_0^2 + 2a(x - x_0)$</p>
+          <p class="text-sm">• $\Delta x = \frac{v_0 + v}{2} \cdot t$</p>
+        </div>
+
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 space-y-3">
+          <h2 class="text-lg font-bold text-indigo-400">Speeding Up vs. Slowing Down</h2>
+          <p class="text-sm">• <strong>Speeding Up:</strong> Velocity and acceleration have the <em>SAME sign</em> (both positive or both negative).</p>
+          <p class="text-sm">• <strong>Slowing Down:</strong> Velocity and acceleration have <em>OPPOSITE signs</em> (one positive, one negative).</p>
+        </div>
+
+        <div class="bg-slate-800 rounded-xl p-6 border border-slate-700 space-y-3">
+          <h2 class="text-lg font-bold text-indigo-400">Graph Properties</h2>
+          <p class="text-sm">• <strong>Slope of $x(t)$:</strong> Velocity $v(t)$</p>
+          <p class="text-sm">• <strong>Concavity of $x(t)$:</strong> Acceleration sign ($\cup \implies a>0$, $\cap \implies a<0$)</p>
+          <p class="text-sm">• <strong>Slope of $v(t)$:</strong> Acceleration $a(t)$</p>
+          <p class="text-sm">• <strong>Signed Area under $v(t)$:</strong> Displacement ($\Delta x$)</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // --- APPROVED PARALLEL QUIZ DATA ---
+    const quizData = [
+      {
+        id: 1,
+        title: "Item 1: Direction of Acceleration Vectors",
+        question: "A submarine diving straight downward ($-y$ direction) begins to slow down as it approaches the ocean floor. Make a statement concerning its acceleration vector.",
+        options: [
+          "The acceleration is zero.",
+          "The acceleration points downward ($-y$ direction).",
+          "The acceleration points upward ($+y$ direction).",
+          "A statement cannot be made without knowing its mass."
+        ],
+        answer: 2,
+        explanation: "When an object slows down, its acceleration vector points opposite to its velocity vector. Since $v < 0$ (downward), acceleration must point upward ($a > 0$ or $+y$ direction)."
+      },
+      {
+        id: 2,
+        title: "Item 2: Conditions for Zero Acceleration",
+        question: "Which of the following objects is undergoing <strong>zero acceleration</strong>?",
+        options: [
+          "A car driving around a circular track at a constant speed of 25 m/s.",
+          "An elevator moving straight upward between floors at a constant speed of 3.0 m/s.",
+          "A baseball thrown straight up into the air, at the exact peak of its path.",
+          "A sled slowing down as it slides across a patch of gravel."
+        ],
+        answer: 1,
+        explanation: "Acceleration requires a change in velocity magnitude (speed) OR direction. The elevator travels at constant speed in a straight line ($\Delta v = 0 \\implies a = 0$). The car changes direction, the baseball accelerates due to gravity ($g$), and the sled changes speed."
+      },
+      {
+        id: 3,
+        title: "Item 3: Calculus Derivative Signs & Motion",
+        question: "A particle's position function $x(t)$ has a negative first derivative ($x'(t) < 0$) and a positive second derivative ($x''(t) > 0$) at time $t = 2.0\\text{ s}$. Which statement correctly describes the particle's motion at $t = 2.0\\text{ s}$?",
+        options: [
+          "Moving in the $+x$ direction and speeding up",
+          "Moving in the $+x$ direction and slowing down",
+          "Moving in the $-x$ direction and speeding up",
+          "Moving in the $-x$ direction and slowing down"
+        ],
+        answer: 3,
+        explanation: "The first derivative represents velocity ($v(t) = x'(t) < 0$), meaning motion in the $-x$ direction. The second derivative represents acceleration ($a(t) = x''(t) > 0$). Because velocity and acceleration have <strong>opposite signs</strong> ($-v$ and $+a$), the particle is <strong>slowing down</strong>."
+      },
+      {
+        id: 4,
+        title: "Item 4: Free-Fall Gravity Scaling",
+        question: "On exoplanet Kepler-186f, objects in free fall accelerate at a rate of approximately $\\frac{g}{9}$. If a dropped rock takes $t_E$ seconds to reach the ground on Earth, roughly how long will it take on Kepler-186f to fall from the same initial height?",
+        options: [
+          "9 times longer",
+          "3 times longer",
+          "\\sqrt{3} times longer",
+          "1/3 as long"
+        ],
+        answer: 1,
+        explanation: "Using $h = \\frac{1}{2}gt^2 \\implies t = \\sqrt{\\frac{2h}{g}}$. Reducing gravity to $\\frac{g}{9}$ increases fall time by a factor of $\\sqrt{9} = 3$."
+      },
+      {
+        id: 5,
+        title: "Item 5: 1D Constant Acceleration Kinematics",
+        question: "A train traveling along a straight track uniformly increases its speed from $20\\text{ m/s}$ to $30\\text{ m/s}$ while covering a distance of $125\\text{ m}$. What is the magnitude of the train's acceleration?",
+        type: "numeric",
+        correctVal: 2.0,
+        unit: "m/s²",
+        explanation: "Use $v^2 = v_0^2 + 2a\\Delta x$: $30^2 = 20^2 + 2a(125) \\implies 900 = 400 + 250a \\implies 500 = 250a \\implies a = 2.0\\text{ m/s}^2$."
+      },
+      {
+        id: 6,
+        title: "Item 6: Calculus Kinematics (Polynomial Functions)",
+        question: "An object moves along a straight line with a velocity function $v(t) = 3t^2 - 6t$ (in $\\text{m/s}$).<br><strong>(a)</strong> What is the object's acceleration at $t = 3.0\\text{ s}$?<br><strong>(b)</strong> What is the object's position at $t = 2.0\\text{ s}$ if $x(0) = 0\\text{ m}$?",
+        type: "dual-numeric",
+        valA: 12,
+        valB: -4,
+        unitA: "m/s²",
+        unitB: "m",
+        explanation: "<strong>Part (a):</strong> $a(t) = \\frac{dv}{dt} = 6t - 6$. At $t = 3\\text{ s}$, $a(3) = 6(3) - 6 = 12\\text{ m/s}^2$.<br><strong>Part (b):</strong> $x(t) = \\int (3t^2 - 6t) dt = t^3 - 3t^2$. At $t = 2.0\\text{ s}$, $x(2) = 2^3 - 3(2)^2 = 8 - 12 = -4\\text{ m}$."
+      },
+      {
+        id: 7,
+        title: "Items 7–9: Velocity-Time Graph Analysis",
+        question: "Consider a velocity-time graph over $t = 0$ to $6\\text{ s}$:<br>• $t = 0 \\to 2\\text{ s}$: $v(t)$ increases linearly from $0\\text{ m/s}$ to $+8\\text{ m/s}$.<br>• $t = 2 \\to 4\\text{ s}$: $v(t)$ decreases linearly from $+8\\text{ m/s}$ to $-8\\text{ m/s}$ (crossing zero at $t = 3\\text{ s}$).<br>• $t = 4 \\to 6\\text{ s}$: $v(t)$ remains constant at $-8\\text{ m/s}$.<br><br><strong>7.</strong> What is velocity at $t = 3.0\\text{ s}$?<br><strong>8.</strong> What is the total displacement over $0 \\le t \\le 6\\text{ s}$?<br><strong>9.</strong> Direction of motion at $t = 5.0\\text{ s}$?",
+        type: "v-graph-combo",
+        ans7: "0",
+        ans8: "-8",
+        ans9: "backward",
+        explanation: "<strong>Q7:</strong> At $t = 3\\text{ s}$, graph crosses $v=0$, so $v(3) = 0\\text{ m/s}$.<br><strong>Q8:</strong> Area $0 \\to 3\\text{s} = \\frac{1}{2}(3)(8) = +12\\text{ m}$. Area $3 \\to 4\\text{s} = \\frac{1}{2}(1)(-8) = -4\\text{ m}$. Area $4 \\to 6\\text{s} = (2)(-8) = -16\\text{ m}$. Net displacement $= 12 - 4 - 16 = -8\\text{ m}$.<br><strong>Q9:</strong> At $t = 5\\text{ s}$, $v(5) = -8\\text{ m/s} < 0$, so motion is Backward."
+      },
+      {
+        id: 10,
+        title: "Items 10–11: Position-Time Graph Analysis",
+        question: "An object's position graph starts at $x(0) = 10\\text{ m}$, increases linearly to $x(15) = 40\\text{ m}$, remains at $40\\text{ m}$ until $t = 30\\text{ s}$, and moves linearly down to $x(50) = -20\\text{ m}$.<br><br>Calculate:<br><strong>(10)</strong> Total displacement over $0 \\le t \\le 50\\text{ s}$<br><strong>(11)</strong> Total distance traveled over $0 \\le t \\le 50\\text{ s}$",
+        type: "dual-numeric",
+        valA: -30,
+        valB: 90,
+        unitA: "m",
+        unitB: "m",
+        explanation: "<strong>Q10 (Displacement):</strong> $\\Delta x = x_f - x_i = -20 - 10 = -30\\text{ m}$.<br><strong>Q11 (Distance):</strong> Path lengths $= \vert{}40 - 10\vert{} + \vert{}40 - 40\vert{} + \vert{}-20 - 40\vert{} = 30 + 0 + 60 = 90\\text{ m}$."
+      },
+      {
+        id: 12,
+        title: "Item 12: Graph Translations (x -> v -> a)",
+        question: "Consider a position-time graph $x(t)$ that is concave upward everywhere and has a negative initial slope that turns into a positive slope. Which description matches its corresponding velocity $v(t)$ and acceleration $a(t)$ graphs?",
+        options: [
+          "$v(t)$ is a horizontal line below zero; $a(t)$ is zero.",
+          "$v(t)$ is a straight line with a positive slope; $a(t)$ is a constant positive value.",
+          "$v(t)$ is a straight line with a negative slope; $a(t)$ is a constant negative value.",
+          "$v(t)$ is a parabola opening upward; $a(t)$ is a line with positive slope."
+        ],
+        answer: 1,
+        explanation: "Concave upward $x(t)$ means $x''(t) = a(t) > 0$ (constant positive acceleration). A constant positive acceleration yields a linear velocity graph with a positive slope."
+      }
+    ];
+
+    const flashcards = [
+      {
+        tag: "Concept #1: Speeding Up vs Slowing Down",
+        q: "How do you check if an object is speeding up or slowing down using signs?",
+        a: "Compare signs of $v$ and $a$. Same sign ($+,+$ or $-,-$) = speeding up. Opposite signs ($+,-$ or $-,+$) = slowing down."
+      },
+      {
+        tag: "Concept #2: Velocity Graph Area",
+        q: "What physical quantity does the area under a velocity-time graph represent?",
+        a: "Displacement ($\Delta x$). Area above the time axis is positive displacement; area below is negative displacement."
+      },
+      {
+        tag: "Concept #3: Derivative Chain",
+        q: "What is the calculus relationship between position, velocity, and acceleration?",
+        a: "$v(t) = \\frac{dx}{dt}$ and $a(t) = \\frac{dv}{dt} = \\frac{d^2x}{dt^2}$."
+      },
+      {
+        tag: "Concept #4: Distance vs Displacement",
+        q: "How do you calculate total distance from a position graph?",
+        a: "Add up the absolute values of the changes in position for each individual motion segment."
+      },
+      {
+        tag: "Concept #5: Free-Fall Scaling",
+        q: "If gravity $g$ is divided by $K$, how does free-fall drop time $t$ change for height $h$?",
+        a: "Since $t = \\sqrt{\\frac{2h}{g}}$, reducing gravity by factor $K$ increases fall time by factor $\\sqrt{K}$."
+      },
+      {
+        tag: "Concept #6: Concavity Meaning",
+        q: "What does concave upward on a position graph $x(t)$ tell you about acceleration?",
+        a: "Concave upward ($\cup$) means $a(t) > 0$. Concave downward ($\cap$) means $a(t) < 0$."
+      },
+      {
+        tag: "Concept #7: Kinematic Equation Without Time",
+        q: "Which kinematic equation should you use when time $t$ is not given or required?",
+        a: "$v^2 = v_0^2 + 2a\\Delta x$."
+      },
+      {
+        tag: "Concept #8: Direction of Motion",
+        q: "How do you determine the direction of motion from a velocity-time graph?",
+        a: "Look at the sign of $v(t)$. If $v > 0$, moving forward ($+x$). If $v < 0$, moving backward ($-x$)."
+      }
+    ];
+
+    let userScores = {};
+    let currentCardIdx = 0;
+    let chartInstance = null;
+
+    // --- TAB SWITCHING ---
+    function switchTab(tabName) {
+      ['quiz', 'visualizer', 'flashcards', 'cheatsheet'].forEach(t => {
+        const el = document.getElementById(`content-${t}`);
+        const btn = document.getElementById(`tab-${t}`);
+        if (el) el.classList.add('hidden');
+        if (btn) {
+          btn.classList.remove('border-indigo-500', 'text-indigo-400');
+          btn.classList.add('border-transparent', 'text-slate-400');
+        }
+      });
+
+      const activeEl = document.getElementById(`content-${tabName}`);
+      const activeBtn = document.getElementById(`tab-${tabName}`);
+      if (activeEl) activeEl.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.classList.add('border-indigo-500', 'text-indigo-400');
+        activeBtn.classList.remove('border-transparent', 'text-slate-400');
+      }
+
+      if (tabName === 'visualizer' && !chartInstance) {
+        initChart();
+      }
+    }
+
+    // --- SAFE MATH RENDER ---
+    function safeRenderMath() {
+      if (window.renderMathInElement) {
+        try {
+          renderMathInElement(document.body, {
+            delimiters: [
+              {left: '$$', right: '$$', display: true},
+              {left: '$', right: '$', display: false}
+            ],
+            throwOnError: false
+          });
+        } catch (e) {
+          console.warn("KaTeX rendering warning:", e);
+        }
+      }
+    }
+
+    // --- RENDER QUIZ ---
+    function renderQuiz() {
+      const container = document.getElementById('quiz-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      quizData.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = "bg-slate-800 rounded-xl p-5 border border-slate-700 space-y-4";
+        
+        let inputHTML = '';
+        if (!q.type) { // Multiple choice
+          inputHTML = `<div class="space-y-2 mt-3">` +
+            q.options.map((opt, oIdx) => `
+              <button onclick="checkMC(${idx}, ${oIdx})" class="w-full text-left p-3 rounded-lg bg-slate-900/60 hover:bg-slate-700/60 border border-slate-700 text-sm text-slate-200 transition">
+                ${opt}
+              </button>
+            `).join('') + `</div>`;
+        } else if (q.type === 'numeric') {
+          inputHTML = `
+            <div class="flex items-center gap-3 mt-3">
+              <input type="number" id="num-in-${q.id}" step="any" placeholder="Your answer" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 w-36">
+              <span class="text-sm text-slate-400">${q.unit}</span>
+              <button onclick="checkNumeric(${idx})" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-lg font-semibold">Submit</button>
+            </div>
+          `;
+        } else if (q.type === 'dual-numeric') {
+          inputHTML = `
+            <div class="space-y-2 mt-3">
+              <div class="flex items-center gap-3">
+                <span class="text-xs text-slate-400 w-16">Part (a):</span>
+                <input type="number" id="num-in-a-${q.id}" step="any" placeholder="Part a" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 w-32">
+                <span class="text-xs text-slate-400">${q.unitA}</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs text-slate-400 w-16">Part (b):</span>
+                <input type="number" id="num-in-b-${q.id}" step="any" placeholder="Part b" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-1.5 text-sm text-slate-100 w-32">
+                <span class="text-xs text-slate-400">${q.unitB}</span>
+                <button onclick="checkDualNumeric(${idx})" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-4 py-2 rounded-lg font-semibold ml-2">Submit</button>
+              </div>
+            </div>
+          `;
+        } else if (q.type === 'v-graph-combo') {
+          inputHTML = `
+            <div class="space-y-2 mt-3 text-sm">
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400 text-xs w-36">7. Velocity at t=3s:</span>
+                <input type="text" id="g-ans-7" placeholder="e.g. 0 m/s" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-100 w-28">
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400 text-xs w-36">8. Total displacement:</span>
+                <input type="text" id="g-ans-8" placeholder="e.g. -8 m" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-100 w-28">
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-slate-400 text-xs w-36">9. Direction at t=5s:</span>
+                <input type="text" id="g-ans-9" placeholder="e.g. Backward" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-slate-100 w-28">
+                <button onclick="checkVGraphCombo(${idx})" class="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1 rounded font-semibold transition ml-2">Check All</button>
+              </div>
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">${q.title}</span>
+            <span id="badge-${q.id}" class="text-xs px-2 py-0.5 rounded font-semibold bg-slate-700 text-slate-400">Unanswered</span>
+          </div>
+          <p class="text-sm text-slate-200 leading-relaxed">${q.question}</p>
+          ${inputHTML}
+          <div id="exp-${q.id}" class="hidden p-3 rounded-lg bg-slate-900 border border-indigo-500/30 text-xs text-slate-300 space-y-1 mt-3">
+            <strong class="text-indigo-400">Step-by-Step Solution:</strong>
+            <p>${q.explanation}</p>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      safeRenderMath();
+    }
+
+    // --- CHECK ANSWERS ---
+    function updateScoreDisplay() {
+      const correctCount = Object.values(userScores).filter(v => v === true).length;
+      document.getElementById('score-display').innerText = `${correctCount} / ${quizData.length}`;
+    }
+
+    function checkMC(qIdx, selectedOpt) {
+      const q = quizData[qIdx];
+      const isCorrect = (selectedOpt === q.answer);
+      userScores[q.id] = isCorrect;
+
+      const badge = document.getElementById(`badge-${q.id}`);
+      const exp = document.getElementById(`exp-${q.id}`);
+
+      if (badge) {
+        badge.className = isCorrect ? "text-xs px-2 py-0.5 rounded font-semibold bg-emerald-950 text-emerald-400 border border-emerald-500/40" : "text-xs px-2 py-0.5 rounded font-semibold bg-rose-950 text-rose-400 border border-rose-500/40";
+        badge.innerText = isCorrect ? "Correct ✓" : "Incorrect ✗";
+      }
+      if (exp) exp.classList.remove('hidden');
+      updateScoreDisplay();
+    }
+
+    function checkNumeric(qIdx) {
+      const q = quizData[qIdx];
+      const val = parseFloat(document.getElementById(`num-in-${q.id}`).value);
+      const isCorrect = Math.abs(val - q.correctVal) < 0.1;
+      userScores[q.id] = isCorrect;
+
+      const badge = document.getElementById(`badge-${q.id}`);
+      const exp = document.getElementById(`exp-${q.id}`);
+
+      if (badge) {
+        badge.className = isCorrect ? "text-xs px-2 py-0.5 rounded font-semibold bg-emerald-950 text-emerald-400 border border-emerald-500/40" : "text-xs px-2 py-0.5 rounded font-semibold bg-rose-950 text-rose-400 border border-rose-500/40";
+        badge.innerText = isCorrect ? "Correct ✓" : "Incorrect ✗";
+      }
+      if (exp) exp.classList.remove('hidden');
+      updateScoreDisplay();
+    }
+
+    function checkDualNumeric(qIdx) {
+      const q = quizData[qIdx];
+      const valA = parseFloat(document.getElementById(`num-in-a-${q.id}`).value);
+      const valB = parseFloat(document.getElementById(`num-in-b-${q.id}`).value);
+
+      const isCorrect = (Math.abs(valA - q.valA) < 0.1) && (Math.abs(valB - q.valB) < 0.1);
+      userScores[q.id] = isCorrect;
+
+      const badge = document.getElementById(`badge-${q.id}`);
+      const exp = document.getElementById(`exp-${q.id}`);
+
+      if (badge) {
+        badge.className = isCorrect ? "text-xs px-2 py-0.5 rounded font-semibold bg-emerald-950 text-emerald-400 border border-emerald-500/40" : "text-xs px-2 py-0.5 rounded font-semibold bg-rose-950 text-rose-400 border border-rose-500/40";
+        badge.innerText = isCorrect ? "Both Correct ✓" : "Check Values ✗";
+      }
+      if (exp) exp.classList.remove('hidden');
+      updateScoreDisplay();
+    }
+
+    function checkVGraphCombo(qIdx) {
+      const q = quizData[qIdx];
+      const a7 = document.getElementById('g-ans-7').value.trim();
+      const a8 = document.getElementById('g-ans-8').value.trim();
+      const a9 = document.getElementById('g-ans-9').value.trim().toLowerCase();
+
+      const c7 = a7.includes("0");
+      const c8 = a8.includes("-8");
+      const c9 = a9.includes("back") || a9.includes("reverse") || a9.includes("-");
+
+      const isCorrect = c7 && c8 && c9;
+      userScores[q.id] = isCorrect;
+
+      const badge = document.getElementById(`badge-${q.id}`);
+      const exp = document.getElementById(`exp-${q.id}`);
+
+      if (badge) {
+        badge.className = isCorrect ? "text-xs px-2 py-0.5 rounded font-semibold bg-emerald-950 text-emerald-400 border border-emerald-500/40" : "text-xs px-2 py-0.5 rounded font-semibold bg-amber-950 text-amber-400 border border-amber-500/40";
+        badge.innerText = isCorrect ? "All Correct ✓" : "Reviewed";
+      }
+      if (exp) exp.classList.remove('hidden');
+      updateScoreDisplay();
+    }
+
+    function resetQuiz() {
+      userScores = {};
+      renderQuiz();
+      updateScoreDisplay();
+    }
+
+    // --- FLASHCARD CONTROLS ---
+    function updateCard() {
+      const fc = flashcards[currentCardIdx];
+      if (!fc) return;
+      document.getElementById('card-tag').innerText = fc.tag;
+      document.getElementById('card-question').innerHTML = fc.q;
+      document.getElementById('card-answer').innerHTML = fc.a;
+      document.getElementById('card-counter').innerText = `${currentCardIdx + 1} / ${flashcards.length}`;
+      document.getElementById('flashcard').classList.remove('flipped');
+      safeRenderMath();
+    }
+
+    function flipCard() {
+      document.getElementById('flashcard').classList.toggle('flipped');
+    }
+
+    function nextCard() {
+      currentCardIdx = (currentCardIdx + 1) % flashcards.length;
+      updateCard();
+    }
+
+    function prevCard() {
+      currentCardIdx = (currentCardIdx - 1 + flashcards.length) % flashcards.length;
+      updateCard();
+    }
+
+    // --- CHART LAB ---
+    function initChart() {
+      const ctx = document.getElementById('motionChart');
+      if (!ctx || !window.Chart) return;
+      
+      chartInstance = new Chart(ctx.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: [0, 1, 2, 3, 4, 5],
+          datasets: [
+            { label: 'Position x(t) [m]', data: [], borderColor: '#818cf8', backgroundColor: 'rgba(129, 140, 248, 0.1)' },
+            { label: 'Velocity v(t) [m/s]', data: [], borderColor: '#38bdf8', borderDash: [5, 5] },
+            { label: 'Acceleration a(t) [m/s²]', data: [], borderColor: '#34d399' }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#cbd5e1' } } },
+          scales: {
+            x: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } },
+            y: { grid: { color: '#334155' }, ticks: { color: '#94a3b8' } }
+          }
+        }
+      });
+
+      ['x0', 'v0', 'a'].forEach(p => {
+        const el = document.getElementById(`param-${p}`);
+        if (el) el.addEventListener('input', updateChart);
+      });
+
+      updateChart();
+    }
+
+    function updateChart() {
+      if (!chartInstance) return;
+      const x0 = parseFloat(document.getElementById('param-x0').value);
+      const v0 = parseFloat(document.getElementById('param-v0').value);
+      const a = parseFloat(document.getElementById('param-a').value);
+
+      document.getElementById('val-x0').innerText = x0;
+      document.getElementById('val-v0').innerText = v0;
+      document.getElementById('val-a').innerText = a;
+
+      const times = [0, 1, 2, 3, 4, 5];
+      chartInstance.data.datasets[0].data = times.map(t => x0 + v0 * t + 0.5 * a * t * t);
+      chartInstance.data.datasets[1].data = times.map(t => v0 + a * t);
+      chartInstance.data.datasets[2].data = times.map(() => a);
+      chartInstance.update();
+    }
+
+    // --- INITIALIZE ON LOAD ---
+    document.addEventListener("DOMContentLoaded", function() {
+      renderQuiz();
+      updateCard();
+    });
+  </script>
+</body>
+</html>
